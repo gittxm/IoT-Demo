@@ -7,7 +7,7 @@ const password = '3VDywTV3JZdiPbZ0AOMa';
 const credentials = base64.encode(`${username}:${password}`);
 const elasticsearchUrl = 'http://34.28.106.98:9200';
 const sub = mqtt.connect('mqtt://34.28.106.98:9000');
-const index = 'termometro';
+var index = '';
 const indexDist = "distancia";
 const indexHumo = "humo";
 const indexLuz = "luz";
@@ -20,9 +20,13 @@ var timestampLuz = new Date().toISOString();
 
 sub.on('connect', () => {
     sub.subscribe('Tema/Datos')
+    sub.subscribe('Tema/TempAgua')
 })
 
 sub.on('message', (topic, message) => {
+
+  if(topic ==='Tema/Datos'){
+    index = '';
 
     const mensaje = message.toString();
 
@@ -130,5 +134,43 @@ sub.on('message', (topic, message) => {
           .catch(error => {
             console.error('Error al insertar el documento:', error.message);
           });
+        }
+
+        if(topic==='Tema/TempAgua'){
+
+          index = 'termo_agua';
+          const mensaje = message.toString();
+          console.log("mensaje 142"+ mensaje);
+          const temperaturaAguaMatch = mensaje.match(/TemperaturaAgua:\s*(-?\d+(\.\d+)?)/);
+          const temperatura = temperaturaAguaMatch ? parseFloat(temperaturaAguaMatch[1]) : null;
+          console.log(' temperatura agua :' + temperatura);
+          timestamp = new Date().toISOString();
+          console.log(timestamp);
+          const nuevoDocumento1 = 
+          {
+            "Temperatura":temperatura,
+            "@timestamp" : timestamp 
+          };
+    
+       
+        
+    
+        axios.post(`${elasticsearchUrl}/${index}/_doc`, nuevoDocumento1, {
+            headers: {
+              'Authorization': `Basic ${credentials}`,
+              'Content-Type': 'application/json'
+            }
+            }).then(response => {
+              console.log('Documento insertado con éxito:');
+            }) .catch(error => {
+              console.error('Error al insertar el documento:', error.message);
+            });
+        
+    
+    
+    
+        }
+
+
 
       })
