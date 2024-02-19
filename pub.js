@@ -7,7 +7,7 @@ const client = mqtt.connect('mqtt://34.28.106.98:9000'); // Cambia 'localhost' p
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
+app.get('/', (res) => {
     console.log('connect ... ' , );
     console.error('si conecta:');
             res.json({ data : 'entro' });
