@@ -185,7 +185,7 @@ sub.on('message', (topic, message) => {
     console.log(timestampLED);
     const nuevoDocumentoLED =
     {
-        "Luz" : led, 
+        "LED" : led, 
         "@timestamp" : timestampLED
     };
 
