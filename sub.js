@@ -11,20 +11,23 @@ var index = '';
 
 var timestamp = new Date().toISOString();
 
+
+
 sub.on('connect', () => {
     sub.subscribe('Tema/Datos')
     sub.subscribe('Tema/TempAgua')
     sub.subscribe('Tema/Distancia')
     sub.subscribe('Tema/Luz')
+    sub.subscribe('Tema/LED')
 })
 
 sub.on('message', (topic, message) => {
   index = '';
 
   if(topic ==='Tema/Datos'){;
+    const mensaje = message.toString()
     const temperaturaMatch = mensaje.match(/Temperatura: ([\d.]+) °C/);
     const humedadMatch = mensaje.match(/Humedad: ([\d.]+) %/);
-    const mensaje = message.toString()
     
     // Verificar si se encontraron coincidencias y extraer los valores
     const temperatura = temperaturaMatch ? parseFloat(temperaturaMatch[1]) : null;
@@ -58,7 +61,7 @@ sub.on('message', (topic, message) => {
   }
 
   if(topic==='Tema/TempAgua'){
-    index = 'termo_agua';
+    indexTempAgua = 'termo_agua';
     const mensaje = message.toString();
     console.log("mensaje 142"+ mensaje);
     const temperaturaAguaMatch = mensaje.match(/TemperaturaAgua:\s*(-?\d+(\.\d+)?)/);
@@ -72,7 +75,7 @@ sub.on('message', (topic, message) => {
       "@timestamp" : timestamp 
     };
   
-    axios.post(`${elasticsearchUrl}/${index}/_doc`, nuevoDocumento1, {
+    axios.post(`${elasticsearchUrl}/${indexTempAgua}/_doc`, nuevoDocumento1, {
       headers: {
         'Authorization': `Basic ${credentials}`,
         'Content-Type': 'application/json'
@@ -85,7 +88,7 @@ sub.on('message', (topic, message) => {
   }
 
   if(topic==='Tema/Distancia'){
-    index = 'distancia';
+    indexDist = 'distancia';
     const mensaje = message.toString();
     console.log("mensaje 142"+ mensaje);
     const distanciaMatch = mensaje.match(/Distancia: ([\d.]+) cm/); 
@@ -114,7 +117,7 @@ sub.on('message', (topic, message) => {
   }
 
   if(topic==='Tema/Luz'){
-    index = 'luz';
+    indexLuz = 'luz';
     const mensaje = message.toString();
     console.log("mensaje 142"+ mensaje);
     const luzMatch = mensaje.match(/Luz: ([\d.]+) luz/); 
@@ -143,7 +146,7 @@ sub.on('message', (topic, message) => {
   }
 
   if(topic==='Tema/Humo'){
-    index = 'humo';
+    indexHumo = 'humo';
     const mensaje = message.toString();
     console.log("mensaje 142"+ mensaje);
     const humoMatch = mensaje.match(/Humo: ([\d.]+) humo/);   
@@ -158,6 +161,35 @@ sub.on('message', (topic, message) => {
     };
 
     axios.post(`${elasticsearchUrl}/${indexHumo}/_doc`, nuevoDocumentoHumo, {
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log('Documento insertado con éxito:', response.data);
+    })
+    .catch(error => {
+      console.error('Error al insertar el documento:', error.message);
+    });
+  }
+
+  if(topic==='Tema/LED'){
+    indexLED = 'led';
+    const mensaje = message.toString();
+    console.log("mensaje 142"+ mensaje);
+    const ledMatch = mensaje.match(/LED: ([\d.]+)/); 
+    const led = ledMatch ? parseFloat(ledMatch[1]) : null;
+    console.log(' led :' + led);
+    var timestampLED = new Date().toISOString();
+    console.log(timestampLED);
+    const nuevoDocumentoLED =
+    {
+        "Luz" : led, 
+        "@timestamp" : timestampLED
+    };
+
+    axios.post(`${elasticsearchUrl}/${indexLED}/_doc`, nuevoDocumentoLED, {
       headers: {
         'Authorization': `Basic ${credentials}`,
         'Content-Type': 'application/json'
