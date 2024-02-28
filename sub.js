@@ -118,8 +118,34 @@ sub.on('message', (topic, message) => {
     console.log(' temperatura agua :' + temperatura);
     timestamp = new Date().toISOString();
     console.log(timestamp);
+    let valorTemperatura;
+
+    if (temperatura < -10){
+      valorTemperatura = "EXTREMADAMENTE FRÍO";
+    } 
+    if (temperatura  >= -10 && temperatura <= 5){
+      valorTemperatura = "MUY FRÍO";
+    } 
+    if (temperatura > 5 && temperatura <= 15){
+      valorTemperatura = "FRÍO";
+    } 
+    if (temperatura > 15 && temperatura <= 25){
+      valorTemperatura = "TEMPLADO";
+    } 
+    if (temperatura > 25 && temperatura <= 35){
+      valorTemperatura = "CÁLIDO";
+    } 
+    if (temperatura > 35 && temperatura <= 45){
+      valorTemperatura = "CALIENTE";
+    } 
+    if (temperatura > 98){
+      valorTemperatura = "HIRBIENDO";
+    } 
+
+
     const nuevoDocumento1 = 
     {
+      "ValorTemperatura":valorTemperatura,
       "Temperatura":temperatura,
       "@timestamp" : timestamp 
     };
