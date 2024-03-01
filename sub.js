@@ -172,10 +172,12 @@ sub.on('message', (topic, message) => {
     var timestampDist = new Date().toISOString();
     console.log(timestampDist);
     let valorDistancia;
+    let valorMuyCerca;
     if (distancia <= 10){
       valorDistancia = "MUY CERCA";
+      valorMuyCerca = "MUY CERCA";
     } 
-    else if (distancia  > 10 && distancia <= 50){
+    if (distancia  > 10 && distancia <= 50){
       valorDistancia = "CERCA";
     } 
     if (distancia > 50 && distancia < 100){
@@ -188,6 +190,7 @@ sub.on('message', (topic, message) => {
     {
         "Distancia" : distancia, 
         'ValorDistancia' : valorDistancia,
+        'ValorMuyCerca' : valorMuyCerca, 
         "@timestamp" : timestampDist
     };
 
@@ -215,8 +218,10 @@ sub.on('message', (topic, message) => {
     var timestampLuz = new Date().toISOString();
     console.log(timestampLuz);
     let valorLuz;
+    let valorOscuro;
     if (luz == 0){
       valorLuz = "OSCURO"; 
+      valorOscuro = "OSCURO";
     }
     if (luz == 1){
       valorLuz = "TENUE"; 
@@ -234,6 +239,7 @@ sub.on('message', (topic, message) => {
     {
         "Luz" : luz, 
         'ValorLuz' : valorLuz,
+        'ValorOscuro' : valorOscuro,
         "@timestamp" : timestampLuz
     };
 
