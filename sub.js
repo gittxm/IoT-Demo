@@ -22,26 +22,75 @@ sub.on('connect', () => {
 })
 
 sub.on('message', (topic, message) => {
-  index = '';
 
+
+  
   if(topic ==='Tema/Datos'){;
+    index = 'termometro';
     const mensaje = message.toString()
+    console.log("mensaje 142"+ mensaje);
     const temperaturaMatch = mensaje.match(/Temperatura: ([\d.]+) °C/);
     const humedadMatch = mensaje.match(/Humedad: ([\d.]+) %/);
-    
-    // Verificar si se encontraron coincidencias y extraer los valores
     const temperatura = temperaturaMatch ? parseFloat(temperaturaMatch[1]) : null;
     const humedad = humedadMatch ? parseFloat(humedadMatch[1]) : null;
-    
-    //console.log(' temp:' + temperatura);
-    //console.log('humedad' + humedad);
-
-    timestamp = new Date().toISOString();
+    console.log(' temperatura  :' + temperatura);
+    console.log(' humedad :' + humedad);
+    var timestamp = new Date().toISOString();
     console.log(timestamp);
+    let valorTemperatura;
+    let valorHumedad;
+    if (temperatura < -10){
+      valorTemperatura = "EXTREMADAMENTE FRÍO";
+    } 
+    if (temperatura  >= -10 && temperatura <= 5){
+      valorTemperatura = "MUY FRÍO";
+    } 
+    if (temperatura > 5 && temperatura <= 15){
+      valorTemperatura = "FRÍO";
+    } 
+    if (temperatura > 15 && temperatura <= 25){
+      valorTemperatura = "TEMPLADO";
+    } 
+    if (temperatura > 25 && temperatura <= 35){
+      valorTemperatura = "CÁLIDO";
+    } 
+    if (temperatura > 35 && temperatura <= 45){
+      valorTemperatura = "CALUROSO";
+    } 
+    if (temperatura > 45){
+      valorTemperatura = "EXTREMADAMENTE CALUROSO";
+    } 
+
+
+
+    if (humedad < 10){
+      valorHumedad = "EXTREMADAMENTE SECO";
+    } 
+    if (humedad  >= 10 && humedad <= 20){
+      valorHumedad = "MUY SECO";
+    } 
+    if (humedad > 20 && humedad <= 30){
+      valorHumedad = "SECO";
+    } 
+    if (humedad > 30 && humedad <= 50){
+      valorHumedad = "MODERADAMENTE HUMEDO";
+    } 
+    if (humedad > 50 && humedad <= 60){
+      valorHumedad = "HÚMEDO";
+    } 
+    if (humedad > 60 && humedad <= 70){
+      valorHumedad = "MUY HÚMEDO";
+    } 
+    if (humedad > 70){
+      valorHumedad = "EXTREMADAMENTE HÚMEDO";
+    } 
+
     const nuevoDocumento =
     {
         "Temperatura":temperatura,
+        'ValorTemperatura' : valorTemperatura,
         "Humedad" : humedad,
+        'ValorHumedad' : valorHumedad,
         "@timestamp" : timestamp
     };
 
@@ -96,9 +145,26 @@ sub.on('message', (topic, message) => {
     console.log(' distancia :' + distancia);
     var timestampDist = new Date().toISOString();
     console.log(timestampDist);
+    let valorDistancia;
+    let valorMuyCerca;
+    if (distancia <= 10){
+      valorDistancia = "MUY CERCA";
+      valorMuyCerca = "MUY CERCA";
+    } 
+    if (distancia  > 10 && distancia <= 50){
+      valorDistancia = "CERCA";
+    } 
+    if (distancia > 50 && distancia < 100){
+      valorDistancia = "LEJOS";
+    } 
+    if (distancia >= 100){
+      valorDistancia = "MUY LEJOS";
+    } 
     const nuevoDocumentoDist =
     {
         "Distancia" : distancia, 
+        'ValorDistancia' : valorDistancia,
+        'ValorMuyCerca' : valorMuyCerca, 
         "@timestamp" : timestampDist
     };
 
@@ -125,9 +191,29 @@ sub.on('message', (topic, message) => {
     console.log(' luz :' + luz);
     var timestampLuz = new Date().toISOString();
     console.log(timestampLuz);
+    let valorLuz;
+    let valorOscuro;
+    if (luz == 0){
+      valorLuz = "OSCURO"; 
+      valorOscuro = "OSCURO";
+    }
+    if (luz == 1){
+      valorLuz = "TENUE"; 
+    }
+    if (luz == 2){
+      valorLuz = "CLARO"; 
+    }
+    if (luz == 3){
+      valorLuz = "BRILLANTE"; 
+    }
+    if (luz == 4){
+      valorLuz = "MUY BRILLANTE"; 
+    }
     const nuevoDocumentoLuz =
     {
         "Luz" : luz, 
+        'ValorLuz' : valorLuz,
+        'ValorOscuro' : valorOscuro,
         "@timestamp" : timestampLuz
     };
 
@@ -185,7 +271,7 @@ sub.on('message', (topic, message) => {
     console.log(timestampLED);
     const nuevoDocumentoLED =
     {
-        "Luz" : led, 
+        "LED" : led, 
         "@timestamp" : timestampLED
     };
 
